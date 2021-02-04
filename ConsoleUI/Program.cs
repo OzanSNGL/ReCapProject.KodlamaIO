@@ -19,6 +19,8 @@ namespace ConsoleUI
             {
                 Console.WriteLine(car.CarName + "| Daily price: " + car.DailyPrice + "TL | Model Year: " + car.ModelYear);
             }
+
+            carManager.Add();
         }
     }
 }
