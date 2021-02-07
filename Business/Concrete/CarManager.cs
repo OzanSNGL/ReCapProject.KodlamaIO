@@ -3,6 +3,7 @@ using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 using Entities;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,7 +21,7 @@ namespace Business.Concrete
         public void Add()
         {
             string brandName = null;
-            brand: Console.WriteLine("Please enter a Brand Name:");
+        brand: Console.WriteLine("Please enter a Brand Name:");
             brandName = Console.ReadLine();
             if (brandName.Length < 2)
             {
@@ -32,6 +33,7 @@ namespace Business.Concrete
             if (dailyPrice < 1)
             {
                 Console.WriteLine("Please enter a price more than 0TL");
+                goto brand;
             }
             Console.WriteLine("Please enter the model year:");
             int modelYear = int.Parse(Console.ReadLine());
@@ -51,6 +53,11 @@ namespace Business.Concrete
         public List<Car> GetAllByColorId(int colorId)
         {
             return _carDal.GetAll(p=>p.ColorId==colorId);
+        }
+
+        public List<ProductDetailDto> productDetailDtos()
+        {
+            return _carDal.GetProductDetails();
         }
     }
 }
