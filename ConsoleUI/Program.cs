@@ -1,6 +1,7 @@
 ﻿using Business.Concrete;
 using DataAccess.Concrete.EntityFramework;
 using DataAccess.Concrete.InMemory;
+using Entities.Concrete;
 using Entities.DTOs;
 using System;
 
@@ -10,43 +11,30 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            CarManager carManager = new CarManager(new EfCarDal());
+            
             BrandManager brandManager = new BrandManager(new EfBrandDal());
             ColorManager colorManager = new ColorManager(new EfColorDal());
+            UserManager userManager = new UserManager(new EfUserDal());
+            
+            CustomerManager customerManager = new CustomerManager(new EfCustomerDal());
 
-            GetAll(carManager);
+            Car carToAdd = new Car { CarId = 8, BrandId = 1, CarName = "BMW 2", ColorId = 2, DailyPrice = 330, ModelYear = 2016, Description = null };
+            Car carToUpdate = new Car { DailyPrice = 650 };
+            Rental rentToAdd = new Rental { Id = 6, CarId = 7, CustomerId = 2, RentDate = new DateTime(12 / 02 / 2021), ReturnDate = new DateTime() };
+            Rental rentToUpdate = new Rental { ReturnDate = new DateTime(15 / 02 / 2021) };
 
-            Console.WriteLine("----------");
+            CarManager carManager = new CarManager(new EfCarDal());
+            carManager.Add(carToAdd);
+            Console.WriteLine("------------");
+            carManager.Update(carToUpdate);
 
-            GetByBrandId(carManager);
+            Console.WriteLine("------------");
 
-            Console.WriteLine("----------");
+            RentalManager rentalManager = new RentalManager(new EfRentalDal());
+            rentalManager.Add(rentToAdd);
+            Console.WriteLine("------------");
+            rentalManager.Update(rentToUpdate);
 
-            GetByColorId(carManager);
-        }
-
-        private static void GetByColorId(CarManager carManager)
-        {
-            foreach (var car in carManager.GetAllByColorId(2))
-            {
-                Console.WriteLine("Car Name: {0}  |  Daily Price: {1}   ", car.CarName, car.DailyPrice);
-            }
-        }
-
-        private static void GetByBrandId(CarManager carManager)
-        {
-            foreach (var car in carManager.GetAllByBrandId(1))
-            {
-                Console.WriteLine("Car Name: {0}  |  Daily Price: {1}   ", car.CarName, car.DailyPrice);
-            }
-        }
-
-        private static void GetAll(CarManager carManager)
-        {
-            foreach (var car in carManager.productDetailDtos())
-            {
-                Console.WriteLine("Car Name: {0}  |  Brand: {1}  |  Color: {2}  |  Daily Price: {3}TL", car.CarName, car.BrandName, car.ColorName, car.DailyPrice);
-            }
         }
     }
 }

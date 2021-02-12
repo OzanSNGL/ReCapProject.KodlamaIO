@@ -1,4 +1,6 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 using Entities;
@@ -18,46 +20,48 @@ namespace Business.Concrete
             _carDal = carDal;
         }
 
-        public void Add()
+        public IResult Add(Car car)
         {
-            string brandName = null;
-        brand: Console.WriteLine("Please enter a Brand Name:");
-            brandName = Console.ReadLine();
-            if (brandName.Length < 2)
+            if (car.CarName.Length < 2)
             {
-                Console.WriteLine("Please enter more than 2 characters.");
-                goto brand;
+                return new ErrorResult(Messages.CarNameInvalid);
             }
-            Console.WriteLine("Please enter your suggested daily price:");
-            int dailyPrice = int.Parse(Console.ReadLine());
-            if (dailyPrice < 1)
+            _carDal.Add(car);
+            return new SuccessResult(Messages.CarAdded);
+        }
+
+        public IDataResult<List<Car>> GetAll()
+        {
+            return new DataResult<List<Car>>(_carDal.GetAll(), true);
+        }
+
+        public IDataResult<List<Car>> GetAllByBrandId(int id)
+        {
+            if (id < 1)
             {
-                Console.WriteLine("Please enter a price more than 0TL");
-                goto brand;
+                return new ErrorDataResult<List<Car>>(Messages.CarIdInvalid);
             }
-            Console.WriteLine("Please enter the model year:");
-            int modelYear = int.Parse(Console.ReadLine());
-            Console.WriteLine("You have successfully added your car. Please wait for verification.");
+            return new DataResult<List<Car>>(_carDal.GetAll(p => p.BrandId == id), true, Messages.BrandIdInvalid);
         }
 
-        public List<Car> GetAll()
+        public IDataResult<List<Car>> GetAllByColorId(int id)
         {
-            return _carDal.GetAll();
+            if (id < 1)
+            {
+                return new ErrorDataResult<List<Car>>(Messages.ColorIdInvalid);
+            }
+            return new DataResult<List<Car>>(_carDal.GetAll(p => p.ColorId == id), true);
         }
 
-        public List<Car> GetAllByBrandId(int brandId)
+        public IDataResult<List<ProductDetailDto>> productDetailDtos()
         {
-            return _carDal.GetAll(p=>p.BrandId==brandId);
+            return new DataResult<List<ProductDetailDto>>(_carDal.GetProductDetails(), true);
         }
 
-        public List<Car> GetAllByColorId(int colorId)
+        public IResult Update(Car car)
         {
-            return _carDal.GetAll(p=>p.ColorId==colorId);
-        }
-
-        public List<ProductDetailDto> productDetailDtos()
-        {
-            return _carDal.GetProductDetails();
+            _carDal.Update(car);
+            return new SuccessResult(Messages.CarUpdated);
         }
     }
 }
