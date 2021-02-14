@@ -12,12 +12,6 @@ namespace Business.Concrete
     public class RentalManager : IRentalService
     {
         IRentalDal _rentalDal;
-        ICarDal _carDal;
-
-        public RentalManager(ICarDal carDal)
-        {
-            _carDal = carDal;
-        }
 
         public RentalManager(IRentalDal rentalDal)
         {
@@ -44,7 +38,7 @@ namespace Business.Concrete
         {
             if (rental.ReturnDate == null)
             {
-                return new DataResult<List<Rental>>(_rentalDal.GetAll(), true);
+                return new DataResult<List<Rental>>(_rentalDal.GetAll(), true, Messages.CarsListed);
             }
             return new ErrorDataResult<List<Rental>>(Messages.CannotBeListed);
         }
@@ -53,7 +47,7 @@ namespace Business.Concrete
         {
             if (rental.ReturnDate != null)
             {
-                return new DataResult<List<Rental>>(_rentalDal.GetAll(), true);
+                return new DataResult<List<Rental>>(_rentalDal.GetAll(), true, Messages.CarsListed);
             }
             return new ErrorDataResult<List<Rental>>(Messages.CannotBeListed);
         }

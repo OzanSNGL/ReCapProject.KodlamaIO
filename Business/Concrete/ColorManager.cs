@@ -20,7 +20,7 @@ namespace Business.Concrete
 
         public IDataResult<List<Color>> GetAll()
         {
-            return new DataResult<List<Color>>(_colorDal.GetAll(), true);
+            return new DataResult<List<Color>>(_colorDal.GetAll(), true, Messages.CarsListed);
         }
 
         public IDataResult<Color> GetAllById(int colorId)
@@ -29,7 +29,7 @@ namespace Business.Concrete
             {
                 return new ErrorDataResult<Color>(Messages.ColorIdInvalid);
             }
-            return new SuccessDataResult<Color>(_colorDal.Get(p=>p.ColorId == colorId));
+            return new SuccessDataResult<Color>(_colorDal.Get(p=>p.ColorId == colorId), Messages.CarsListed);
         }
     }
 }
