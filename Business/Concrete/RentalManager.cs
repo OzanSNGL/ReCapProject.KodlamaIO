@@ -54,8 +54,14 @@ namespace Business.Concrete
 
         public IResult Update(Rental rental)
         {
-            _rentalDal.Update(rental);
-            return new SuccessResult(Messages.RentUpdated);
+            int id = new int();
+            id = int.Parse(Console.ReadLine());
+            if (rental.Id == id)
+            {
+                _rentalDal.Update(rental);
+                return new SuccessResult(Messages.RentUpdated);
+            }
+            return new ErrorResult(Messages.CarIdInvalid);
         }
     }
 }
