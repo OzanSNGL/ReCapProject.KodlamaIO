@@ -1,5 +1,8 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -18,18 +21,16 @@ namespace Business.Concrete
             _rentalDal = rentalDal;
         }
 
+        [ValidationAspect(typeof(RentalValidator))]
         public IResult Add(Rental rental)
         {
-            if (rental.CarId == 0 && rental.CustomerId == 0 && rental.RentDate.Hour > 22)
-            {
-                return new ErrorResult(Messages.RentNotAdded);
-            }
             _rentalDal.Add(rental);
             return new SuccessResult(Messages.RentAdded);
         }
 
         public IResult Delete(Rental rental)
         {
+            ValidationTool.Validate(new RentalValidator(), rental);
             _rentalDal.Delete(rental);
             return new SuccessResult(Messages.RentDeleted);
         }
@@ -54,14 +55,9 @@ namespace Business.Concrete
 
         public IResult Update(Rental rental)
         {
-            int id = new int();
-            id = int.Parse(Console.ReadLine());
-            if (rental.Id == id)
-            {
-                _rentalDal.Update(rental);
-                return new SuccessResult(Messages.RentUpdated);
-            }
-            return new ErrorResult(Messages.CarIdInvalid);
+            ValidationTool.Validate(new RentalValidator(), rental);
+            _rentalDal.Update(rental);
+            return new SuccessResult(Messages.RentUpdated);
         }
     }
 }

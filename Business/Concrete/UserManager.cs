@@ -1,5 +1,7 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -17,26 +19,17 @@ namespace Business.Concrete
             _userDal = userDal;
         }
 
+        [ValidationAspect(typeof(UserValidator))]
         public IResult Add(User user)
         {
-            if (user.FirstName.Length < 2 && user.Password.Length < 8)
-            {
-                return new ErrorResult(Messages.UserNotAdded);
-            }
             _userDal.Add(user);
             return new SuccessResult(Messages.UserAdded);
         }
 
         public IResult Delete(User user)
         {
-            string enteredpassword = null;
-            Console.ReadLine();
-            if (enteredpassword == user.Password)
-            {
-                _userDal.Delete(user);
-                return new SuccessResult(Messages.UserDeleted);
-            }
-            return new ErrorResult(Messages.UserNotDeleted);
+            _userDal.Delete(user);
+            return new SuccessResult(Messages.UserDeleted);
         }
 
         public IResult Update(User user)
