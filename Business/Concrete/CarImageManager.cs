@@ -29,7 +29,7 @@ namespace Business.Concrete
         [ValidationAspect(typeof(CarImageValidator))]
         public IResult Add(CarImage carImage, IFormFile file)
         {
-            IResult result = BusinessRules.Run(CheckImageCount(carImage.CarId));
+            IResult result = BusinessRules.Run(CheckImageCount(carImage.CarId), IfImgExists(carImage));
             if (result != null)
             {
                 return result;
@@ -63,6 +63,7 @@ namespace Business.Concrete
 
         public IDataResult<CarImage> Get(int carId)
         {
+
             return new SuccessDataResult<CarImage>(_carImageDal.Get(p => p.Id == carId));
         }
 
@@ -76,6 +77,20 @@ namespace Business.Concrete
                 return new ErrorResult(Messages.MaxImageCount);
             }
             return new SuccessResult();
+        }
+
+        string defaultPath = Environment.CurrentDirectory + "@/Images/CarImages/default.jpg";
+        private IResult IfImgExists(CarImage carImage)
+        {
+            if (carImage.ImgPath == null)
+            {
+                carImage.ImgPath.Replace(carImage.ImgPath, defaultPath);
+                return new SuccessResult();
+            }
+            else
+            {
+                return new SuccessResult();
+            }
         }
     }
 }
