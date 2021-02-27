@@ -33,5 +33,11 @@ namespace Business.Constants
         public static string RentDeleted = "A rent has been deleted";
         public static string RentUpdated = "A rent has been updated";
         public static string CannotBeListed = "This list cannot be listed.";
+        public static string MaxImageCount = "Max image count for this car has been reached.";
+        public static string ImageAdded = "Image has been added.";
+        public static string ImageDeleted = "Image has been deleted.";
+        public static object ImagesShown = "Images have been listed." ;
+        public static string ImageUpdated = "Images have been updated.";
+        public static string ImageNotAdded = "Image cannot be added.";
     }
 }
