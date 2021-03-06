@@ -30,6 +30,11 @@ namespace Business.Concrete
             return new SuccessResult(Messages.RentAdded);
         }
 
+        public IResult AddTransaction(Rental rental)
+        {
+            throw new NotImplementedException();
+        }
+
         [SecuredOperation("rental.delete,admin")]
         [ValidationAspect(typeof(RentalValidator))]
         public IResult Delete(Rental rental)
