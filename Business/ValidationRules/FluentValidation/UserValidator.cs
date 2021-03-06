@@ -1,4 +1,5 @@
-﻿using Entities.Concrete;
+﻿using Core.Entities.Concrete;
+using Entities.Concrete;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -14,10 +15,8 @@ namespace Business.ValidationRules.FluentValidation
             RuleFor(u => u.FirstName.Length).LessThan(20).GreaterThan(2);
             RuleFor(u=>u.LastName).NotEmpty();
             RuleFor(u => u.LastName.Length).LessThan(20).GreaterThan(2);
-            RuleFor(u => u.Password).NotEmpty();
-            RuleFor(u => u.Password.Length).GreaterThan(8);
-            RuleFor(u => u.EMail).NotEmpty();
-            RuleFor(u => u.EMail).Must(ContainMail);
+            RuleFor(u => u.Email).NotEmpty();
+            RuleFor(u => u.Email).Must(ContainMail);
         }
 
         private bool ContainMail(string arg)
