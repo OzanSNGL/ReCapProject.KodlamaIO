@@ -36,6 +36,11 @@ namespace Business.Concrete
             return new SuccessResult(Messages.UserDeleted);
         }
 
+        public IDataResult<List<User>> GetAll()
+        {
+            return new DataResult<List<User>>(_userDal.GetAll(), true, Messages.UserListed);
+        }
+
         public User GetByMail(string email)
         {
             return _userDal.Get(u => u.Email == email);

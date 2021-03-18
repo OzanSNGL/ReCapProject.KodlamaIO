@@ -1,13 +1,15 @@
 ﻿using Core.Entities.Concrete;
 using Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace DataAccess.Concrete.EntityFramework
 {
-    public class NorthwindContext:DbContext
+    public class ProjectDbContext:DbContext
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

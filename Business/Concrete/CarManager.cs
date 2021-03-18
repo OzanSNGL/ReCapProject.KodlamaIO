@@ -14,6 +14,7 @@ using Entities.Concrete;
 using Entities.DTOs;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace Business.Concrete
@@ -35,8 +36,6 @@ namespace Business.Concrete
             return new SuccessResult(Messages.CarAdded);
         }
 
-        [CacheAspect]
-        [PerformanceAspect(5)]
         public IDataResult<List<Car>> GetAll()
         {
             return new DataResult<List<Car>>(_carDal.GetAll(), true, Messages.CarsListed);
@@ -62,9 +61,14 @@ namespace Business.Concrete
             return new DataResult<List<Car>>(_carDal.GetAll(p => p.ColorId == id), true, Messages.CarsListed);
         }
 
-        public IDataResult<List<ProductDetailDto>> productDetailDtos()
+        public IDataResult<List<ProductDetailDto>> GetCarDetails(int carId)
         {
-            return new DataResult<List<ProductDetailDto>>(_carDal.GetProductDetails(), true, Messages.CarDetailsListed);
+            return new DataResult<List<ProductDetailDto>>(_carDal.GetProductDetails(p=>p.CarId == carId), true, Messages.CarDetailsListed);
+        }
+
+        public IDataResult<List<ProductDetailDto>> GetAllCarDetails(Expression<Func<Car, bool>> filter = null)
+        {
+            return new DataResult<List<ProductDetailDto>>(_carDal.GetProductDetails(filter), true, Messages.CarsListed);
         }
 
         [SecuredOperation("car.update,admin")]

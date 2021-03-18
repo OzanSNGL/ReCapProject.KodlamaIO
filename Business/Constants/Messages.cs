@@ -1,4 +1,5 @@
-﻿using Entities.Concrete;
+﻿using Core.Entities.Concrete;
+using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -48,5 +49,6 @@ namespace Business.Constants
         public static string SuccessfulLogin = "You have logged in successfully.";
         public static string AccessTokenCreated = "Access Token created.";
         public static string UserAlreadyExists = "User already exists.";
+        internal static string UserListed = "Users are listed.";
     }
 }

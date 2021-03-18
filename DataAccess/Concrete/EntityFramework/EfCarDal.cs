@@ -11,18 +11,24 @@ using System.Text;
 
 namespace DataAccess.Concrete.EntityFramework
 {
-    public class EfCarDal : EfEntityRepositoryBase<Car, NorthwindContext>, ICarDal
+    public class EfCarDal : EfEntityRepositoryBase<Car, ProjectDbContext>, ICarDal
     {
-        public List<ProductDetailDto> GetProductDetails()
+        public List<ProductDetailDto> GetProductDetails(Expression<Func<Car, bool>> filter = null)
         {
-            using (NorthwindContext context = new NorthwindContext())
+            using (ProjectDbContext context = new ProjectDbContext())
             {
-                var result = from c in context.Cars
-                             join b in context.Brands
-                             on c.BrandId equals b.BrandId
-                             join co in context.Colors
-                             on c.ColorId equals co.ColorId
-                             select new ProductDetailDto { BrandName = b.BrandName, CarName = c.CarName, ColorName = co.ColorName, DailyPrice = c.DailyPrice};
+                var result = from car in filter == null ? context.Cars : context.Cars.Where(filter)
+                             join color in context.Colors on car.ColorId equals color.ColorId
+                             join brand in context.Brands on car.BrandId equals brand.BrandId
+                             select new ProductDetailDto()
+                             {
+                                 CarId = car.CarId,
+                                 CarName = car.CarName,
+                                 BrandName = brand.BrandName,
+                                 ColorName = color.ColorName,
+                                 ModelYear = car.ModelYear,
+                                 DailyPrice = car.DailyPrice
+                             };
                 return result.ToList();
             }
         }

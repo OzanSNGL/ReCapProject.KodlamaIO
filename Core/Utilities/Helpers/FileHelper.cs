@@ -1,60 +1,93 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Core.Utilities.Results;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Core.Utilities.Helpers
 {
     public class FileHelper
     {
-        public static string Add(IFormFile file)
+        public static IDataResult<String> WriteFile(IFormFile formFile, string path)
         {
-            var sourcePath = Path.GetTempFileName();
-            if (file.Length > 0)
+            var result = FileNameCreator(formFile, path);
+            var fullPath = Path.Combine(path, result.fileName);
+
+            try
             {
-                using (var fileStream = new FileStream(sourcePath, FileMode.Create))
+                var sourcePath = Path.GetTempFileName();
+                if (formFile.Length > 0)
+                    using (var stream = new FileStream(sourcePath, FileMode.Create))
+                        formFile.CopyTo(stream);
+
+                if (!Directory.Exists(path))
                 {
-                    file.CopyTo(fileStream);
+                    Directory.CreateDirectory(path);
                 }
+
+                File.Move(sourcePath, fullPath);
             }
-            var result = newPath(file);
-            File.Move(sourcePath, result);
-            return result;
-        }
-
-        public static void Delete(string path)
-        {
-            File.Delete(path);
-        }
-
-        public static string Update(string sourcePath, IFormFile file)
-        {
-            var result = newPath(file);
-            if (sourcePath.Length > 0)
+            catch (Exception exception)
             {
-                using (var fileStream = new FileStream(result, FileMode.Create))
-                {
-                    file.CopyTo(fileStream);
-                }
+                return new ErrorDataResult<String>(exception.Message);
             }
-            File.Delete(sourcePath);
-            return result;
+
+            return new SuccessDataResult<String>(result.pathToSave, "File saved successfully");
         }
 
-
-
-        //new Path
-        public static string newPath(IFormFile file)
+        public static IDataResult<String> Update(string sourcePath, IFormFile formFile, string path)
         {
-            FileInfo fi = new FileInfo(file.FileName);
-            string fileExtension = fi.Extension;
+            var result = FileNameCreator(formFile, path);
+            var fullPath = Path.Combine(path, result.fileName);
 
-            string path = Environment.CurrentDirectory + @"\Images\carImages";
-            var newPath = Guid.NewGuid().ToString() + " " + DateTime.Now.Month + " " + DateTime.Now.Day + " " + DateTime.Now.Year + fileExtension;
+            try
+            {
+                if (sourcePath.Length > 0)
+                {
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        formFile.CopyTo(stream);
+                    }
+                }
 
-            string result = $@"{path}\{newPath}";
-            return result;
+                File.Delete(sourcePath);
+            }
+            catch (Exception excepiton)
+            {
+                return new ErrorDataResult<String>(excepiton.Message);
+            }
+
+            return new SuccessDataResult<String>(result.pathToSave, "File updated successfully");
         }
+
+        public static IResult Delete(string path)
+        {
+            try
+            {
+                File.Delete(path);
+            }
+            catch (Exception exception)
+            {
+                return new ErrorResult(exception.Message);
+            }
+
+            return new SuccessResult();
+        }
+
+        static string GetFileExtension(IFormFile formFile)
+        {
+            return new FileInfo(formFile.FileName).Extension;
+        }
+
+        static (string fileName, string pathToSave) FileNameCreator(IFormFile formFile, string path)
+        {
+            var fileName = Guid.NewGuid().ToString() + GetFileExtension(formFile);
+            var pathToSave = Path.Combine(Path.DirectorySeparatorChar.ToString(),
+                path.Split(Path.DirectorySeparatorChar).Last(), fileName);
+            return (fileName, pathToSave);
+        }
+
     }
 }
